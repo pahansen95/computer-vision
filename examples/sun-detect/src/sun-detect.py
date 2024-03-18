@@ -77,27 +77,26 @@ To find the center of the sun:
   1. Find the contours of the Edge Mask
     - Isolate the largest contour
   2. For a full circle, fit a circle to the contour
-  3. For a parrial circle (arc), fit a ...
+  3. For a partial circle (arc), fit a TODO
   4. From the circle, calculate the radius and absolute center
-    - clamp the center to the image's dimensions
 
 """
 
 # Find the contours of the edge mask
-edge_mask_points = np.argwhere(edge_mask > 0)[:, [1, 0]]
-logger.debug(f"{edge_mask_points.shape=}")
-logger.debug(f"{edge_mask_points[0]}")
-# raise NotImplementedError
-contours, _ = cv2.findContours(edge_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-contour = max(contours, key=cv2.contourArea)
-logger.debug(f"{contour=}")
+# contours, _ = cv2.findContours(edge_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+# contour = max(contours, key=cv2.contourArea)
+# logger.debug(f"{contour=}")
+# # Fit a circle to the contour
+# if len(contours) > 1:
+#   raise NotImplementedError("Multiple Contours Detected")
+# (x, y), radius = cv2.minEnclosingCircle(contour)
 
-# Fit a circle to the contour
-if len(contours) > 1:
-  raise NotImplementedError("Multiple Contours Detected")
+# Alternative Method: The Edge Mask is the countour we want
+contours = np.argwhere(edge_mask > 0)[:, [1, 0]]
+logger.debug(f"{contours.shape=}")
+logger.debug(f"{contours[0]}")
 
-# center, radius = cv2.minEnclosingCircle(contour)
-(x, y), radius = cv2.minEnclosingCircle(edge_mask_points)
+(x, y), radius = cv2.minEnclosingCircle(contours)
 # sun_center_abs = (int(x), int(y))
 sun_center_abs = (int(x), int(y))
 sun_radius_abs = int(radius)
